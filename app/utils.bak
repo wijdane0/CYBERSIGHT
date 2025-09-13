@@ -1,0 +1,37 @@
+from datetime import datetime
+from app.models import IOC , db
+from sqlalchemy.exc import IntegrityError
+
+def update_or_create_ioc(type, value, source, description=None, threat_type=None, severity=None):
+    """Insert or update an IOC in the database"""
+    ioc = IOC.query.filter_by(value=value).first()
+
+    if ioc:
+        # Update existing record
+        print(f"Updating existing IOC: {value}")
+        ioc.last_seen = datetime.utcnow()
+        ioc.source = source  # optionally update source
+        ioc.description = description or ioc.description
+        ioc.threat_type = threat_type or ioc.threat_type
+        ioc.severity = severity or ioc.severity
+    else:
+        # Insert new record
+        print(f"Adding new IOC: {value}")
+        ioc = IOC(
+            type=type,
+            value=value,
+            source=source,
+            description=description,
+            threat_type=threat_type,
+            severity=severity,
+            first_seen=datetime.utcnow(),
+            last_seen=datetime.utcnow(),
+            is_active=True
+        )
+        db.session.add(ioc)
+
+    try:
+        db.session.commit()
+    except IntegrityError as e:
+        db.session.rollback()
+        print(f"[ERROR] Could not save IOC '{value}': {e}")

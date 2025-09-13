@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block title %}CYBERSIGHT — Home{% endblock %}
+{% block content %}
+<video autoplay muted loop playsinline class="background-video">
+  <source src="{{ url_for('static', filename='video/cyber-loop.mp4') }}" type="video/mp4">
+</video>
+
+<div class="home-container" style="padding-top:92px; position:relative; z-index:1;">
+  <div class="centerpiece" style="display:flex; flex-direction:column; align-items:center; width:100%;">
+    <div class="cybersight-logo-animate" style="margin-bottom:12px;">
+      <svg width="92" height="102" viewBox="0 0 38 43" fill="none" aria-hidden="true">
+        <path d="M19 41 Q5 33 5 15 L19 4 L33 15 Q33 33 19 41 Z" fill="#0A0C10" stroke="#FFB938" stroke-width="2.5"/>
+        <path d="M19 10 L19 36" stroke="#FFB938" stroke-width="2.5"/>
+      </svg>
+    </div>
+
+    <div class="cybersight-title">CYBERSIGHT</div>
+    <p class="hero-subtitle">Real-Time Threat Detection.</p>
+
+    <form method="get" action="{{ url_for('main.iocs_list') }}" class="ultra-wide-search">
+      <span class="search-leading-icon" aria-hidden="true"><i class="bi bi-search"></i></span>
+      <input type="text" name="q" class="dashboard-search-input" placeholder="Search IOCs, IPs, Domains..." autocomplete="off" />
+      <button type="submit" class="dashboard-search-btn" aria-label="Search"><i class="bi bi-search"></i></button>
+    </form>
+
+    <div class="ioc-card-grid">
+      {% for ioc in latest_iocs[:4] %}
+        <div class="ioc-card-wide">
+          <div class="ioc-value">{{ ioc.value }}</div>
+          <div class="ioc-meta">
+            {{ ioc.source or '' }}
+            {% if ioc.threat_type %}| {{ ioc.threat_type }}{% endif %}
+            {% if ioc.last_seen %}| {{ ioc.last_seen.strftime('%Y-%m-%d %H:%M') }}{% endif %}
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+
+    <a href="{{ url_for('main.iocs_list') }}" class="btn-explore">Explore More</a>
+  </div>
+</div>
+{% endblock %}

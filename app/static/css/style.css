@@ -1,0 +1,147 @@
+@font-face{
+  font-family:'Technovier';
+  src:url('/static/fonts/TechnovierBold.ttf') format('opentype');
+  font-weight:normal; font-style:normal;
+}
+
+:root{
+  --accent-color:#FFB938;
+  --text-light:#DADCE1;
+  --card-bg:rgba(25,27,34,.82);
+  --nav-bg:#0A0C10;
+}
+
+/* Base */
+html, body {
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  background-color: #000; /* Instant black background on load */
+  color: var(--text-light);
+  overflow-x: hidden;
+}
+
+/* Background video */
+.background-video{position:fixed;top:0;left:0;width:100%;height:100%;object-fit:cover;z-index:0;pointer-events:none}
+
+/* Navbar */
+.navbar{position:sticky;top:0;z-index:5;background-color: #000000; }
+.navbar-inner,.custom-navbar-inner{display:flex;align-items:center;justify-content:space-between!important;padding:.30rem .85rem;background:var(--nav-bg)!important}
+.navbar-logo-svg{margin-right:8px}
+.navbar-title,.navbar-title a,.cybersight-navbar-title{font-family:'Technovier',Arial,sans-serif;font-size:1.02rem!important;font-weight:400;color:#fff!important;letter-spacing:.09em;text-decoration:none}
+
+/* Right navbar search */
+.navbar-search{display:flex;align-items:center;background:var(--nav-bg);border:1px solid #2a2d33;border-radius:10px;overflow:hidden;width:clamp(190px,24vw,320px);margin-left:auto}
+.navbar-search input{border:none;outline:none;padding:7px 10px;font-size:.9rem;background:transparent;color:#fff;width:100%}
+.navbar-search input::placeholder{color:#8a8f98}
+.navbar-search button{background:transparent;border:none;padding:6px 10px;cursor:pointer}
+.navbar-search button i{color:#fff}
+
+/* Hero */
+.cybersight-logo-animate svg{width:80px;height:85px}
+.cybersight-title{font-family:'Technovier',Arial,sans-serif;font-size:3rem;letter-spacing:.15em;color:#DADCE1;font-weight:400;text-align:center;margin-bottom:6px}
+.hero-subtitle{margin:0 0 10px 0;color:#cfd3da;font-size:1.02rem;letter-spacing:.04em}
+
+/* Center search — wider and closer to cards */
+.ultra-wide-search{display:flex;align-items:center;background:rgba(30,32,38,.9);border:1px solid rgba(255,255,255,.08);border-radius:12px;width:min(980px,96vw);padding:4px 6px;backdrop-filter:blur(4px);margin-bottom:8px}
+.ultra-wide-search .search-leading-icon{margin-left:8px;margin-right:4px;color:#fff;opacity:.9}
+.dashboard-search-input{flex:1;border:none;outline:none;background:transparent;color:#fff;padding:9px 10px;font-size:1rem}
+.dashboard-search-input::placeholder{color:#b4b7bd}
+.dashboard-search-btn{border:none;background:transparent;color:#fff;padding:8px 10px;border-radius:8px;cursor:pointer}
+
+/* Cards: slimmer, wider, less horizontal gap, tighter to search bar */
+.ioc-card-grid{width:1100px;max-width:96vw;display:grid;grid-template-columns:1fr 1fr;row-gap:18px;column-gap:4px;margin:6px 0 22px 0;justify-items:center}
+.ioc-card-wide{background:var(--card-bg);border-radius:12px;padding:.65rem 1.4rem .55rem 1.4rem;box-shadow:0 8px 26px rgba(0,0,0,.3);backdrop-filter:blur(4px)}
+.ioc-value{font-family:'Fira Mono','JetBrains Mono','Consolas',monospace;font-weight:800;font-size:1.04em;color:#fff}
+.ioc-meta{font-size:.90em;color:#c6c3af}
+
+/* Explore button: white + transparent */
+.btn-explore{display:inline-block;padding:12px 26px;background:transparent;color:#fff;border:1px solid #fff;border-radius:10px;font-weight:700;text-decoration:none;transition:all .12s ease}
+.btn-explore:hover{background:#fff;color:#0A0C10;box-shadow:0 8px 24px rgba(255,255,255,.28);transform:translateY(-1px)}
+
+/* IOC page shell */
+.iocpage-wrap{max-width:1200px;margin:84px auto;padding:0 16px;position:relative;z-index:1}
+.iocpage-title{color:#fff;text-align:center;margin-bottom:14px;font-family:'Technovier',Arial,sans-serif;letter-spacing:.14em}
+
+/* Filters */
+.iocfilters-glass{background:rgba(12,14,18,.65);border:1px solid rgba(255,255,255,.08);border-radius:14px;backdrop-filter:blur(6px);padding:12px;margin:0 auto 12px;width:100%;max-width:1200px}
+.iocfilters-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.iocfilters-field{display:flex;flex-direction:column;gap:4px}
+.iocfilters-label{color:#d9dbe0;font-size:.78rem;letter-spacing:.06em}
+.iocfilters-input{appearance:none;background:rgba(30,32,38,.85);color:#fff;border:1px solid rgba(255,255,255,.10);border-radius:8px;padding:8px 10px;font-size:.92rem;outline:none;width:100%}
+.iocfilters-input:focus{border-color:var(--accent-color);box-shadow:0 0 0 2px rgba(255,185,56,.18)}
+
+/* Table */
+.iocpage-table{width:100%;border-collapse:collapse;background:rgba(11,12,15,.74);color:#fff;border-radius:12px;overflow:hidden;box-shadow:0 10px 40px rgba(0,0,0,.35)}
+.iocpage-table thead th{background:rgba(15,17,22,.82);color:#f5f7fb;padding:14px 18px;border-bottom:1px solid rgba(26,29,36,.8)}
+.iocpage-table td{padding:12px 18px;border-bottom:1px solid rgba(23,26,32,.8)}
+
+/* Neutral severity + status */
+.ioc-badge,.ioc-badge-neutral,.badge-high,.badge-medium,.badge-unknown{background:transparent!important;color:#ffffff!important;border:1px solid rgba(255,255,255,.18);padding:3px 10px;border-radius:9999px;font-weight:600;font-size:.82rem}
+.ioc-status{color:#ccc}
+
+/* Inspect button */
+.btn-outline-accent{background:transparent;color:var(--accent-color)!important;border:1px solid var(--accent-color);padding:6px 12px;border-radius:8px;font-weight:700;font-size:.9rem;text-decoration:none!important;transition:all .12s ease}
+.btn-outline-accent:hover{background:var(--accent-color);color:#0A0C10!important;box-shadow:0 8px 24px rgba(255,185,56,.28);transform:translateY(-1px)}
+
+/* Fade on table refresh */
+.iocpage-table-outer{opacity:0;transition:opacity .22s ease-in-out}
+.iocpage-table-outer.loaded{opacity:1}
+
+/* Pagination visuals */
+.pagination-wrap{margin-top:16px}
+.pagination{gap:6px;flex-wrap:wrap}
+.page-link{background:#0f1116!important;color:#fff!important;border:1px solid #1a1d24!important;min-width:40px;text-align:center}
+.page-item.active .page-link{background:var(--accent-color)!important;color:#0A0C10!important}
+
+/* Footer above video */
+.app-footer{color:#666;background:#0A0C10;text-align:center;padding:16px 0;font-size:.96em;margin-top:60px;position:relative;z-index:2}
+
+/* Responsive */
+@media (max-width:768px){
+  .iocfilters-grid{grid-template-columns:1fr}
+  .ioc-card-grid{grid-template-columns:1fr;width:100%}
+}
+/* ——— Balanced hero sizing ——— */
+.ultra-wide-search{
+  width: clamp(700px, 30vw, 960px);  /* narrower, looks good on wide screens */
+  margin-bottom: 12px;
+}
+
+/* Cards container */
+.ioc-card-grid {
+  max-width: 850px;           /* same width as search bar */
+  margin: 28px auto 50px auto; /* more space above and below */
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: 24px;           /* same as before */
+  row-gap: 20px;               /* same as before */
+}
+
+/* Card style */
+.ioc-card-wide {
+  padding: 0.9rem 1.5rem;
+  border-radius: 10px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Space between search bar and cards */
+.search-container {
+  margin-bottom: 28px; /* more breathing room */
+}
+
+/* Space between cards and Explore button */
+.explore-more {
+  margin-top: 36px; /* more breathing room */
+}
+
+/* Text size inside cards */
+.ioc-value {
+  font-size: 1.05em;
+}
+
+.ioc-meta {
+  font-size: 0.9em;
+}
+

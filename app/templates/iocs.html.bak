@@ -1,0 +1,146 @@
+{% extends "base.html" %}
+{% block title %}CYBERSIGHT — IOCs{% endblock %}
+{% block content %}
+<video autoplay muted loop playsinline class="background-video">
+  <source src="{{ url_for('static', filename='video/cyber-loop.mp4') }}" type="video/mp4">
+</video>
+
+<div class="iocpage-wrap" style="position:relative; z-index:1;">
+  <h1 class="iocpage-title">Threat Intelligence Feed</h1>
+
+  <form method="get" class="ioc-filters iocfilters-glass" id="iocFilterForm">
+    <div class="iocfilters-grid">
+      <label class="iocfilters-field">
+        <span class="iocfilters-label">Type</span>
+        <select class="iocfilters-input" name="type" onchange="submitFilter()">
+          {% for t in ioc_types %}
+            <option value="{{ t }}" {% if ioc_type==t %}selected{% endif %}>{{ t|capitalize }}</option>
+          {% endfor %}
+        </select>
+      </label>
+
+      <label class="iocfilters-field">
+        <span class="iocfilters-label">Severity</span>
+        <select class="iocfilters-input" name="severity" onchange="submitFilter()">
+          {% for s in severities %}
+            <option value="{{ s }}" {% if severity==s %}selected{% endif %}>{{ s|capitalize }}</option>
+          {% endfor %}
+        </select>
+      </label>
+
+      <label class="iocfilters-field">
+        <span class="iocfilters-label">Source</span>
+        <select class="iocfilters-input" name="source" onchange="submitFilter()">
+          <option value="">All</option>
+          {% for src in sources %}
+            {% if src|lower != "manual" %}
+              <option value="{{ src }}" {% if source==src %}selected{% endif %}>{{ src }}</option>
+            {% endif %}
+          {% endfor %}
+        </select>
+      </label>
+    </div>
+  </form>
+
+  <div class="ioc-table-responsive iocpage-table-outer" id="iocTableContainer">
+    <table class="ioc-table iocpage-table">
+      <thead>
+        <tr>
+          <th>TYPE</th>
+          <th>VALUE</th>
+          <th>SOURCE</th>
+          <th>THREAT</th>
+          <th>SEVERITY</th>
+          <th>STATUS</th>
+          <th style="text-align:center;">ACTIONS</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for ioc in iocs.items %}
+        <tr>
+          <td>{{ ioc.type|upper }}</td>
+          <td class="iocpage-value">{{ ioc.value }}</td>
+          <td>{{ ioc.source }}</td>
+          <td>{{ ioc.threat_type or 'N/A' }}</td>
+          <td><span class="ioc-badge ioc-badge-neutral">{{ (ioc.severity or 'unknown')|capitalize }}</span></td>
+          <td><span class="ioc-status">{{ 'Active' if ioc.is_active else 'Inactive' }}</span></td>
+          <td style="text-align:center;">
+            <a href="https://www.virustotal.com/gui/search/{{ ioc.value }}" class="btn-outline-accent" target="_blank">Inspect</a>
+          </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="7" class="text-center text-light">No records found.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 3-number pagination (Prev/current±1/Next) -->
+  {% set current = iocs.page %}
+  {% set total = iocs.pages %}
+  {% set start = 1 if current-1 < 1 else current-1 %}
+  {% set end = total if current+1 > total else current+1 %}
+
+  <nav aria-label="IOC pagination" class="pagination-wrap">
+    <ul class="pagination justify-content-center flex-wrap">
+      <li class="page-item {% if not iocs.has_prev %}disabled{% endif %}">
+        <a class="page-link" href="{{ url_for('main.iocs_list', page=iocs.prev_num if iocs.has_prev else 1, type=ioc_type, severity=severity, source=source, q=request.args.get('q','')) }}">Previous</a>
+      </li>
+
+      {% for p in range(start, end + 1) %}
+        <li class="page-item {% if p == current %}active{% endif %}">
+          <a class="page-link" href="{{ url_for('main.iocs_list', page=p, type=ioc_type, severity=severity, source=source, q=request.args.get('q','')) }}">{{ p }}</a>
+        </li>
+      {% endfor %}
+
+      <li class="page-item {% if not iocs.has_next %}disabled{% endif %}">
+        <a class="page-link" href="{{ url_for('main.iocs_list', page=iocs.next_num if iocs.has_next else total, type=ioc_type, severity=severity, source=source, q=request.args.get('q','')) }}">Next</a>
+      </li>
+    </ul>
+  </nav>
+</div>
+
+<script>
+  // Fade-in on first render
+  window.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('iocTableContainer').classList.add('loaded');
+    wirePagination();
+  });
+
+  // Auto-submit filters with gentle fade
+  function submitFilter() {
+    const c = document.getElementById('iocTableContainer');
+    c.classList.remove('loaded');
+    setTimeout(() => document.getElementById('iocFilterForm').submit(), 40);
+  }
+
+  // AJAX pagination: replace table + pagination only (no full page reload)
+  function wirePagination(){
+    document.querySelectorAll('.pagination a.page-link').forEach(a=>{
+      a.addEventListener('click', function(e){
+        e.preventDefault();
+        const href = this.getAttribute('href');
+        const container = document.getElementById('iocTableContainer');
+        container.classList.remove('loaded');
+
+        fetch(href, {headers:{'X-Requested-With':'fetch'}})
+          .then(r=>r.text())
+          .then(html=>{
+            const doc = new DOMParser().parseFromString(html, 'text/html');
+            const newTable = doc.querySelector('#iocTableContainer');
+            const newPag   = doc.querySelector('.pagination-wrap');
+            if(newTable) document.getElementById('iocTableContainer').replaceWith(newTable);
+            if(newPag)   document.querySelector('.pagination-wrap').replaceWith(newPag);
+            // rebind for newly injected links
+            wirePagination();
+            // update URL so Back/Forward works
+            window.history.replaceState(null,'', href);
+            // fade-in
+            document.getElementById('iocTableContainer').classList.add('loaded');
+          })
+          .catch(()=>{ window.location = href; }); // fallback if fetch fails
+      });
+    });
+  }
+</script>
+{% endblock %}
