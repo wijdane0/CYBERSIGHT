@@ -1,2 +1,8 @@
-*.tar
 
+venv/
+__pycache__/
+*.pyc
+*.log
+instance/
+*.db
+.env
